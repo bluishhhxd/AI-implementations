@@ -58,7 +58,7 @@ for i in xTrain.columns:
 
 
 def lossFunction(m,b,l1,l2,xTrain,yTrain):
-    lhd=0                                          #likelihood=0
+    nlhd=0                                          #negative likelihood=0
     for i in range(len(xTrain)):
         z=b
         for j in range(len(xTrain.iloc[i])):
@@ -68,7 +68,7 @@ def lossFunction(m,b,l1,l2,xTrain,yTrain):
         eps=1e-15
         hx=np.clip(hx,eps,1-eps)
         curY=yTrain.iloc[i]
-        lhd+=(curY*np.log(hx))+(1-curY)*(np.log(1-hx))               #y*log(hx) + (1-y)(log(1-hx))
+        nlhd+=(curY*np.log(hx))+(1-curY)*(np.log(1-hx))               #y*log(hx) + (1-y)(log(1-hx))
     
     ridge=0
     lasso=0
@@ -77,8 +77,8 @@ def lossFunction(m,b,l1,l2,xTrain,yTrain):
         lasso+=abs(m[i])
     ridge*=l2
     lasso*=l1
-    lhd=(-lhd+ridge+lasso)/len(xTrain)
-    return lhd
+    nlhd=(-nlhd+ridge+lasso)/len(xTrain)
+    return nlhd
 
 
 
@@ -113,33 +113,33 @@ def gradientAscent(m,b,l,l1,l2,xTrain,yTrain):
 
 
 
-l=np.array([ 0.38165748,  0.42986029,  0.35865274,  0.39144489,  0.18306811, -0.23215576,
-  0.5317867,   0.70168187, -0.04334494, -0.2449954,   0.76779355, -0.05071346,
-  0.47828911,  0.53867021,  0.10593973, -0.4380238,   0.04177065,  0.27611858,
- -0.31643508, -0.43785908,  0.61195981,  0.85171411,  0.49643435,  0.55864984,
-  0.45205257,  0.05253606,  0.65582226,  0.61991184,  0.76167933,  0.07771941])
+# l=np.array([ 0.38165748,  0.42986029,  0.35865274,  0.39144489,  0.18306811, -0.23215576,
+#   0.5317867,   0.70168187, -0.04334494, -0.2449954,   0.76779355, -0.05071346,
+#   0.47828911,  0.53867021,  0.10593973, -0.4380238,   0.04177065,  0.27611858,
+#  -0.31643508, -0.43785908,  0.61195981,  0.85171411,  0.49643435,  0.55864984,
+#   0.45205257,  0.05253606,  0.65582226,  0.61991184,  0.76167933,  0.07771941])
 m=np.zeros(len(x.columns))
 
-for i in range(len(l)):
-    m[i]=l[i]
+# for i in range(len(l)):
+#     m[i]=l[i]
     # print(m[i])
-b=-0.5527685592044553
-# b=0
+# b=-0.5527685592044553
+b=0
 l=0.8
 l1=0
 l2=0.004
 
-# print(lossFunction(m,b,l1,l2,xTrain,yTrain))
+print(lossFunction(m,b,l1,l2,xTrain,yTrain))
 
-# epoch=5000
+epoch=5000
 
-# for i in range(1,epoch+1):
-#     m,b=gradientAscent(m,b,l,l1,l2,xTrain,yTrain)
-#     if i%10==0:
-#         print(f"Epoch {i} :- ", lossFunction(m,b,xTrain,yTrain))
-#     if i%500==0:
-#         print(m)
-#         print(b)
+for i in range(1,epoch+1):
+    m,b=gradientAscent(m,b,l,l1,l2,xTrain,yTrain)
+    if i%10==0:
+        print(f"Epoch {i} :- ", lossFunction(m,b,l1,l2,xTrain,yTrain))
+    if i%500==0:
+        print(m)
+        print(b)
 
 
 
@@ -188,6 +188,7 @@ print(f"Test Accuracy: {(testCorrect/testSize)*100}")
 
 def confusionMatrix(threshold):
     tp,fp,tn,fn=0,0,0,0
+    eps=1e-15
 
     for i in range(testSize):
         z=b
@@ -208,13 +209,13 @@ def confusionMatrix(threshold):
         else:
             tn+=1
 
-    print(f"Accuracy:- {(tp+tn)/(tp+fp+tn+fn)}")
-    print(f"Precision:- {tp/(tp+fp)}")
-    print(f"Recall:- {tp/(tp+fn)}")
-    print(f"Specificity:- {tn/(tn+fp)}")
+    print(f"Accuracy:- {(tp+tn)/(tp+fp+tn+fn+eps)}")                            #Overall Correctness that's why True Positive and True Negative in numerator
+    print(f"Precision:- {tp/(tp+fp+eps)}")                                      #How many True values that we are prediciting are actually true over our all predicted True values
+    print(f"Recall:- {tp/(tp+fn+eps)}")                                         #How many True values that we are predicting are actually true over all real True values
+    print(f"Specificity:- {tn/(tn+fp+eps)}")                                    #How many False values that we are predicting are actually False over all real False values
 
 
-for i in range(10):
+for i in range(1,10):                                  #Confusion Matrix accorss various thresholds
     print(f"Threshold {i/10} :-")
     confusionMatrix(i/10)
 
