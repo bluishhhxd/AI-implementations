@@ -91,7 +91,7 @@ def GradientDescent(m,b,l,l1,l2,xTrain,yTrain):
 
     b-=l*bNew
     for i in range(len(m)):                                     # 2*l2*m[i] is the penalty but in derivative form for Ridge
-        m[i]-=l*(mNew[i]+2*l2*m[i])+l1*np.sign(m[i])                          #l1*sign of m[i] here is the derivative form for Lasso 
+        m[i]-=l*(mNew[i]+2*l2*m[i]+l1*np.sign(m[i]))                          #l1*sign of m[i] here is the derivative form for Lasso 
     return m,b
         
     
