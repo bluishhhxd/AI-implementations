@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 
 
 data=pd.read_csv("breast-cancer.csv")
-
+    
 for i,val  in data["diagnosis"].items():
     if val=='M':
         data.at[i,"diagnosis"]=1
