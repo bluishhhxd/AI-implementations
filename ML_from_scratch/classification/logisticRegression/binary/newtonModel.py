@@ -97,8 +97,8 @@ def newtonModel(m,b):
         if(idx!=c):                         #Swapping
             mGrads[idx],mGrads[c]=mGrads[c],mGrads[idx]              #Swapping Gradient Value at idx <-> c
             for col in range(len(m)):      
-                Hessian[idx,col],Hessian[c,col]=Hessian[c,col],Hessian[idx,col]          #Swapping  row idx <-> row c, so that we normalize our diagonals i.e Row swwapping operation
-                #Swapping is done now we can perform the operations over row c
+                Hessian[idx,col],Hessian[c,col]=Hessian[c,col],Hessian[idx,col]          #Swapping  row idx <-> row c, so that we normalize our diagonals to 1, i.e Row swwapping operation
+        #Swapping is done now we can perform the operations over row c
 
         mGrads[c]/=val                #Normalizing the value
         for col in range(len(m)):     #Normalizing our row, Now this diagonal is 1
